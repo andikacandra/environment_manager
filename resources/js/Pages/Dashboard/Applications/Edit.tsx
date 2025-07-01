@@ -31,7 +31,7 @@ import {
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/Components/ui/tooltip";
 import {
     Select,
     SelectContent,
@@ -382,7 +382,9 @@ const ApplicationsEdit = () => {
                     </CardContent>
 
                     <CardFooter className="flex justify-end gap-3 border-t bg-gray-50/80 px-6 py-4">
-                        <Link href={route("applications.index", application.id)}>
+                        <Link
+                            href={route("applications.index", application.id)}
+                        >
                             <Button
                                 type="button"
                                 variant="outline"

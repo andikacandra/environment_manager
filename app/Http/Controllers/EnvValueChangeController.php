@@ -19,10 +19,14 @@ class EnvValueChangeController extends Controller
      */
     public function index()
     {
-        $this->authorize(ability: 'view-env-value-changes');
+        $this->authorize(ability: 'view-any-env-value-changes');
 
-        // The issue is in the relation paths - we need to make sure the application data is available
-        $envValueChanges = EnvValueChange::orderBy('created_at', 'desc')
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $isSuperAdmin = $user->roles->contains(function ($role) {
+            return strtolower($role->name) === 'super-admin';
+        });
+        $query = EnvValueChange::orderBy('created_at', 'desc')
             ->with([
                 'user',
                 'envValue',
@@ -30,24 +34,59 @@ class EnvValueChangeController extends Controller
                 'envValue.envVariable.application',
                 'envValue.accessKey',
                 'envValue.accessKey.envType',
-            ])
-            ->get()
-            ->map(function ($change) {
-                // Ensure application ID is properly set for route generation
-                if ($change->envValue && $change->envValue->accessKey && $change->envValue->accessKey->application) {
-                    // This ensures the application has an ID to avoid the Ziggy error
-                    $change->envValue->accessKey->application->makeVisible('id');
-                }
-                return $change;
-            });
+            ]);
 
-        /** @var \App\Models\User $user */
-        $user = Auth::user();
+        if ($isSuperAdmin) {
+            $envValueChanges = $query->get();
+        } else {
+            $userGroupIds = $user->groupMembers->pluck('group_id')->toArray();
+            $allChanges = $query->get();
+            $envValueChanges = $allChanges->filter(function ($change) use ($user, $userGroupIds) {
+                if (
+                    !$change->envValue ||
+                    !$change->envValue->envVariable ||
+                    !$change->envValue->envVariable->application ||
+                    !$change->envValue->accessKey ||
+                    !$change->envValue->accessKey->envType
+                ) {
+                    return false;
+                }
+
+                $application = $change->envValue->envVariable->application;
+                $envTypeName = strtolower($change->envValue->accessKey->envType->name);
+                $appSlug = $application->slug;
+                if (!in_array($application->group_id, $userGroupIds)) {
+                    return false;
+                }
+                $permissionName = 'view-' . $envTypeName . '-' . $appSlug;
+                $generalPermName = 'view-' . $envTypeName;
+
+                return $user->can($permissionName) || $user->can($generalPermName);
+            });
+        }
+        $envValueChanges = $envValueChanges->map(function ($change) {
+            if (
+                $change->envValue &&
+                $change->envValue->envVariable &&
+                $change->envValue->envVariable->application
+            ) {
+                $change->envValue->envVariable->application->makeVisible('id');
+            }
+            return $change;
+        });
+
+        $canViewDevelopment = $isSuperAdmin || $user->can('view-development');
+        $canViewStaging = $isSuperAdmin || $user->can('view-staging');
+        $canViewProduction = $isSuperAdmin || $user->can('view-production');
 
         return Inertia::render('Dashboard/EnvValueChanges/Index', [
             'envValueChanges' => $envValueChanges,
             'canShowEnvValueChanges' => $user->can('view-env-value-changes'),
-            'canViewApplications' => $user->can('view-applications'),  // Add permission check
+            'canViewApplications' => $user->can('view-applications'),
+            'isSuperAdmin' => $isSuperAdmin,
+            'canViewDevelopment' => $canViewDevelopment,
+            'canViewStaging' => $canViewStaging,
+            'canViewProduction' => $canViewProduction,
         ]);
     }
 

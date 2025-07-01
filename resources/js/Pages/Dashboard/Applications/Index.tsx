@@ -51,23 +51,18 @@ import {
 import ClientPagination from "@/components/ClientPagination";
 
 interface ApplicationsPageProps extends PageProps {
-    applications: Application[];
+    applications: (Application & {
+        userCanView: boolean;
+        userCanEdit: boolean;
+        userCanDelete: boolean;
+    })[];
     canCreateApplication: boolean;
-    canEditApplication: boolean;
-    canDeleteApplication: boolean;
-    canViewApplication: boolean;
     isSuperAdmin: boolean;
 }
 
 const ApplicationsIndex = () => {
-    const {
-        applications,
-        canCreateApplication,
-        canEditApplication,
-        canDeleteApplication,
-        canViewApplication,
-        isSuperAdmin,
-    } = usePage<ApplicationsPageProps>().props;
+    const { applications, canCreateApplication, isSuperAdmin } =
+        usePage<ApplicationsPageProps>().props;
 
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -558,7 +553,7 @@ const ApplicationsIndex = () => {
                                                       </td>
                                                       <td className="whitespace-nowrap px-4 py-3 text-right">
                                                           <div className="flex items-center justify-end gap-2">
-                                                              {canViewApplication && (
+                                                              {application.userCanView && (
                                                                   <TooltipProvider>
                                                                       <Tooltip>
                                                                           <TooltipTrigger
@@ -594,7 +589,7 @@ const ApplicationsIndex = () => {
                                                                   </TooltipProvider>
                                                               )}
 
-                                                              {canEditApplication && (
+                                                              {application.userCanEdit && (
                                                                   <TooltipProvider>
                                                                       <Tooltip>
                                                                           <TooltipTrigger
@@ -629,7 +624,7 @@ const ApplicationsIndex = () => {
                                                                   </TooltipProvider>
                                                               )}
 
-                                                              {canDeleteApplication && (
+                                                              {application.userCanDelete && (
                                                                   <TooltipProvider>
                                                                       <Tooltip>
                                                                           <TooltipTrigger

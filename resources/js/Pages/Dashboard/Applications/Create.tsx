@@ -9,11 +9,7 @@ import {
     AppWindow,
     Info,
     CheckCircle2,
-    Sparkles,
-    Lock,
-    Landmark,
     FolderClosed,
-    PanelRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

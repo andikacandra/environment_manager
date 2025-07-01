@@ -65,8 +65,6 @@ const Sidebar = ({ sidebarOpen, toggleSidebar }: SidebarProps) => {
             setActiveSection(null);
         }
     }, [url]);
-
-    // Check if any menu items in a section are visible
     const isEnvironmentSectionVisible =
         can("view-any-groups") ||
         can("view-any-applications") ||

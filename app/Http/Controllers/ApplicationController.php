@@ -6,8 +6,6 @@ use App\Models\Application;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreApplicationRequest;
 use App\Http\Requests\UpdateApplicationRequest;
-use App\Exports\EnvVariablesExport;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\StoreEnvVariableRequest;
 use App\Http\Requests\UpdateEnvVariableRequest;
 use App\Models\AccessKey;
@@ -23,7 +21,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Str;
 
 class ApplicationController extends Controller
 {
@@ -36,6 +33,7 @@ class ApplicationController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $this->authorize('view-any-applications');
+
         $isSuperAdmin = $user->roles->contains(function ($role) {
             return strtolower($role->name) === 'super-admin';
         });
@@ -47,12 +45,24 @@ class ApplicationController extends Controller
                 ->whereIn('group_id', $userGroupIds)
                 ->get();
         }
+
+        $enhancedApplications = $applications->map(function ($application) use ($user, $isSuperAdmin) {
+            if ($isSuperAdmin) {
+                $application->userCanView = true;
+                $application->userCanEdit = true;
+                $application->userCanDelete = true;
+            } else {
+                $appSlug = $application->slug;
+                $application->userCanView = $user->can('view-application-' . $appSlug);
+                $application->userCanEdit = $user->can('edit-application-' . $appSlug);
+                $application->userCanDelete = $user->can('delete-application-' . $appSlug);
+            }
+
+            return $application;
+        });
         return Inertia::render('Dashboard/Applications/Index', [
-            'applications' => $applications,
+            'applications' => $enhancedApplications,
             'canCreateApplication' => $user->can('create-applications'),
-            'canEditApplication' => $user->can('edit-applications'),
-            'canDeleteApplication' => $user->can('delete-applications'),
-            'canViewApplication' => $user->can('view-applications'),
             'isSuperAdmin' => $isSuperAdmin,
         ]);
     }
@@ -158,7 +168,7 @@ class ApplicationController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        if (!$user->can('view-application') && !$user->can('view-application-' . $application->slug)) {
+        if (!$user->can('view-applications') && !$user->can('view-application-' . $application->slug)) {
             return Redirect::route('applications.index')->with('error', 'You do not have permission to view this application.');
         }
 
@@ -665,27 +675,6 @@ class ApplicationController extends Controller
 
 
     /**
-     * Export environment variables as Excel file
-     *
-     * @param Application $application
-     * @return \Symfony\Component\HttpFoundation\BinaryFileResponse|\Symfony\Component\HttpFoundation\StreamedResponse|\Illuminate\Http\RedirectResponse
-     */
-    public function export(Application $application)
-    {
-        $filename = $application->name . '_env_variables_' . now()->format('Y-m-d') . Str::random(5) . '.xlsx';
-        try {
-            return Excel::download(new EnvVariablesExport($application), $filename);
-        } catch (\Exception $e) {
-            Log::error('Failed to export environment variables: ' . $e->getMessage(), [
-                'application_id' => $application->id,
-                'user_id' => Auth::id(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-            return redirect()->back()->with('error', 'Failed to export environment variables: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * Helper method to create permission if it doesn't exist
      */
     private function createPermissionIfNotExists(string $permissionName)
@@ -700,7 +689,7 @@ class ApplicationController extends Controller
      */
     public function getDownloadToken(Application $application)
     {
-    /** @var \App\Models\User $user */
+        /** @var \App\Models\User $user */
         $user = Auth::user();
 
         $tokenName = 'env-download-' . $application->slug;

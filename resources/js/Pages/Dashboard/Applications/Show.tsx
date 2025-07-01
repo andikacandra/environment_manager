@@ -15,14 +15,10 @@ import {
     Search,
     FolderClosed,
     History,
-    Copy,
-    Eye,
-    EyeOff,
     MoreHorizontal,
     AppWindow,
     Settings,
     Globe,
-    CheckCircle,
     ArrowLeft,
     Trash,
     DownloadIcon,
@@ -67,6 +63,7 @@ import { formatDate } from "@/lib/utils";
 import EditEnvValueModal from "./Partials/EditEnvValueModal";
 import DeleteEnvVariableModal from "./Partials/DeleteEnvVariableModal";
 import DownloadEnvModal from "./Partials/DownloadEnvModal";
+import EnvValueDisplay from "./Partials/EnvValueDisplay";
 
 interface ApplicationsShowProps extends PageProps {
     application: Application;
@@ -101,9 +98,6 @@ const ApplicationsShow = () => {
     } = usePage<ApplicationsShowProps>().props;
 
     const [searchVariables, setSearchVariables] = useState("");
-    const [showSecretValues, setShowSecretValues] = useState<
-        Record<string, boolean>
-    >({});
     const [editingEnvValue, setEditingEnvValue] = useState<EnvValue | null>(
         null
     );
@@ -127,13 +121,6 @@ const ApplicationsShow = () => {
                 const seqB = b.sequence === null ? 999999 : b.sequence;
                 return Number(seqA) - Number(seqB);
             }) || [];
-
-    const toggleSecretVisibility = (id: string) => {
-        setShowSecretValues((prev) => ({
-            ...prev,
-            [id]: !prev[id],
-        }));
-    };
 
     const handleSort = (field: string) => {
         if (sortField === field) {
@@ -166,12 +153,6 @@ const ApplicationsShow = () => {
         return 0;
     });
 
-    const copyToClipboard = (text: string, variableName: string) => {
-        navigator.clipboard.writeText(text);
-        setCopySuccess(variableName);
-        setTimeout(() => setCopySuccess(null), 2000);
-    };
-
     const handleViewHistory = (envVariable: any) => {
         router.get(
             route("applications.history", {
@@ -189,119 +170,6 @@ const ApplicationsShow = () => {
     const handleDeleteEnvVariable = (envVariable: any) => {
         setDeletingVariable(envVariable);
         setIsDeleteDialogOpen(true);
-    };
-
-    const renderEnvValue = (variable: any, envType: string) => {
-        const envValue = variable.env_values?.find(
-            (value: any) =>
-                value.access_key?.env_type?.name?.toLowerCase() ===
-                envType.toLowerCase()
-        );
-
-        if (!envValue) {
-            return (
-                <span className="text-gray-400 italic text-xs">Not set</span>
-            );
-        }
-
-        const valueId = `${envType.charAt(0)}-${envValue.id}`;
-        const isValueVisible = showSecretValues[valueId] || false;
-
-        return (
-            <div className="flex items-center space-x-1">
-                <div
-                    className={`font-mono text-sm ${
-                        isValueVisible ? "" : "filter blur-[3px]"
-                    } transition-all duration-200`}
-                >
-                    {envValue.value || (
-                        <span className="text-gray-400 italic text-xs">
-                            Empty
-                        </span>
-                    )}
-                </div>
-                <div className="flex items-center space-x-0.5">
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6 text-gray-400 hover:text-gray-700"
-                                    onClick={() =>
-                                        toggleSecretVisibility(valueId)
-                                    }
-                                >
-                                    {isValueVisible ? (
-                                        <EyeOff className="h-3.5 w-3.5" />
-                                    ) : (
-                                        <Eye className="h-3.5 w-3.5" />
-                                    )}
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="top">
-                                <p className="text-xs">
-                                    {isValueVisible
-                                        ? "Hide value"
-                                        : "Show value"}
-                                </p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    {envValue.value && (
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-6 w-6 text-gray-400 hover:text-gray-700"
-                                        onClick={() =>
-                                            copyToClipboard(
-                                                envValue.value,
-                                                variable.name
-                                            )
-                                        }
-                                    >
-                                        {copySuccess === variable.name ? (
-                                            <CheckCircle className="h-3.5 w-3.5 text-green-500" />
-                                        ) : (
-                                            <Copy className="h-3.5 w-3.5" />
-                                        )}
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                    <p className="text-xs">Copy to clipboard</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    )}
-
-                    {canEditEnvValues && (
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-6 w-6 text-blue-500 hover:text-blue-700"
-                                        onClick={() =>
-                                            handleEditEnvValue(envValue)
-                                        }
-                                    >
-                                        <Edit className="h-3.5 w-3.5" />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                    <p className="text-xs">Edit value</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
-                    )}
-                </div>
-            </div>
-        );
     };
 
     return (
@@ -492,20 +360,26 @@ const ApplicationsShow = () => {
                                                             )}
                                                         </div>
                                                     </TableHead>
-                                                    <TableHead className="min-w-[180px]">
-                                                        <div className="flex items-center gap-1.5">
-                                                            <Settings className="h-3.5 w-3.5 text-blue-500" />
-                                                            <span>
-                                                                Development
-                                                            </span>
-                                                        </div>
-                                                    </TableHead>
-                                                    <TableHead className="min-w-[180px]">
-                                                        <div className="flex items-center gap-1.5">
-                                                            <Globe className="h-3.5 w-3.5 text-yellow-500" />
-                                                            <span>Staging</span>
-                                                        </div>
-                                                    </TableHead>
+                                                    {canViewDevelopment && (
+                                                        <TableHead className="min-w-[180px]">
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Settings className="h-3.5 w-3.5 text-green-500" />
+                                                                <span>
+                                                                    Development
+                                                                </span>
+                                                            </div>
+                                                        </TableHead>
+                                                    )}
+                                                    {canViewStaging && (
+                                                        <TableHead className="min-w-[180px]">
+                                                            <div className="flex items-center gap-1.5">
+                                                                <Globe className="h-3.5 w-3.5 text-yellow-500" />
+                                                                <span>
+                                                                    Staging
+                                                                </span>
+                                                            </div>
+                                                        </TableHead>
+                                                    )}
                                                     {canViewProduction && (
                                                         <TableHead className="min-w-[180px]">
                                                             <div className="flex items-center gap-1.5">
@@ -562,24 +436,82 @@ const ApplicationsShow = () => {
                                                             <TableCell className="font-mono font-medium">
                                                                 {variable.name}
                                                             </TableCell>
-                                                            <TableCell>
-                                                                {renderEnvValue(
-                                                                    variable,
-                                                                    "development"
-                                                                )}
-                                                            </TableCell>
-                                                            <TableCell>
-                                                                {renderEnvValue(
-                                                                    variable,
-                                                                    "staging"
-                                                                )}
-                                                            </TableCell>
+                                                            {canViewDevelopment && (
+                                                                <TableCell>
+                                                                    <EnvValueDisplay
+                                                                        variable={
+                                                                            variable
+                                                                        }
+                                                                        envType="development"
+                                                                        canView={
+                                                                            canViewDevelopment
+                                                                        }
+                                                                        canEdit={
+                                                                            canEditDevelopment &&
+                                                                            canEditEnvValues
+                                                                        }
+                                                                        onEditEnvValue={
+                                                                            handleEditEnvValue
+                                                                        }
+                                                                        copySuccess={
+                                                                            copySuccess
+                                                                        }
+                                                                        setCopySuccess={
+                                                                            setCopySuccess
+                                                                        }
+                                                                    />
+                                                                </TableCell>
+                                                            )}
+                                                            {canViewStaging && (
+                                                                <TableCell>
+                                                                    <EnvValueDisplay
+                                                                        variable={
+                                                                            variable
+                                                                        }
+                                                                        envType="staging"
+                                                                        canView={
+                                                                            canViewStaging
+                                                                        }
+                                                                        canEdit={
+                                                                            canEditStaging &&
+                                                                            canEditEnvValues
+                                                                        }
+                                                                        onEditEnvValue={
+                                                                            handleEditEnvValue
+                                                                        }
+                                                                        copySuccess={
+                                                                            copySuccess
+                                                                        }
+                                                                        setCopySuccess={
+                                                                            setCopySuccess
+                                                                        }
+                                                                    />
+                                                                </TableCell>
+                                                            )}
                                                             {canViewProduction && (
                                                                 <TableCell>
-                                                                    {renderEnvValue(
-                                                                        variable,
-                                                                        "production"
-                                                                    )}
+                                                                    <EnvValueDisplay
+                                                                        variable={
+                                                                            variable
+                                                                        }
+                                                                        envType="production"
+                                                                        canView={
+                                                                            canViewProduction
+                                                                        }
+                                                                        canEdit={
+                                                                            canEditProduction &&
+                                                                            canEditEnvValues
+                                                                        }
+                                                                        onEditEnvValue={
+                                                                            handleEditEnvValue
+                                                                        }
+                                                                        copySuccess={
+                                                                            copySuccess
+                                                                        }
+                                                                        setCopySuccess={
+                                                                            setCopySuccess
+                                                                        }
+                                                                    />
                                                                 </TableCell>
                                                             )}
                                                             <TableCell className="text-sm text-gray-600">

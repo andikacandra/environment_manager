@@ -93,12 +93,9 @@ class RolePermissionSeeder extends Seeder
         $programmer->givePermissionTo([
             'view-dashboard',
             'view-any-groups',
-            'view-groups',
             'view-any-applications',
-            'view-applications',
+            'view-any-env-value-changes',
             'create-applications',
-            'edit-applications',
-            'delete-applications',
             'create-development',
             'view-development',
             'edit-development',

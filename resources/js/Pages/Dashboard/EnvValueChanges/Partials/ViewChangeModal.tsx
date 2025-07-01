@@ -95,14 +95,15 @@ const ViewChangeModal = ({
                                     <Link
                                         href={route(
                                             "applications.show",
-                                            selectedChange.env_value?.access_key
-                                                ?.application?.id
+                                            selectedChange.env_value
+                                                ?.env_variable?.application?.id
                                         )}
                                         className="font-medium text-indigo-600 hover:underline"
                                     >
                                         {
-                                            selectedChange.env_value?.access_key
-                                                ?.application?.name
+                                            selectedChange.env_value
+                                                ?.env_variable?.application
+                                                ?.name
                                         }
                                     </Link>
                                 </p>

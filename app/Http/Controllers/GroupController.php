@@ -283,7 +283,12 @@ class GroupController extends Controller
                 'user_id' => $validatedData['user_id'],
                 'role' => $validatedData['role'],
             ]);
+
             $userMember = $groupMember->user;
+
+            $applications = $group->applications;
+
+            // Group level permissions
             if ($validatedData['role'] === 'admin') {
                 $userMember->givePermissionTo([
                     'view-group-' . $group->slug,
@@ -294,11 +299,25 @@ class GroupController extends Controller
                     'delete-groupMembers-' . $group->slug,
                     'create-applications-' . $group->slug,
                 ]);
+
+                foreach ($applications as $application) {
+                    $userMember->givePermissionTo([
+                        'view-application-' . $application->slug,
+                        'edit-application-' . $application->slug,
+                        'delete-application-' . $application->slug,
+                    ]);
+                }
             } else {
                 $userMember->givePermissionTo([
                     'view-group-' . $group->slug,
                 ]);
+                foreach ($applications as $application) {
+                    $userMember->givePermissionTo([
+                        'view-application-' . $application->slug,
+                    ]);
+                }
             }
+
             DB::commit();
             return redirect()->route('groups.show', $group)->with('success', 'Group member added successfully!');
         } catch (\Exception $e) {

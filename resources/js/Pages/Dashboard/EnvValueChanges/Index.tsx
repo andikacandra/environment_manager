@@ -9,6 +9,9 @@ import {
     Filter,
     History,
     Search,
+    Settings,
+    Globe,
+    Server,
     SlidersHorizontal,
     User,
 } from "lucide-react";
@@ -44,19 +47,29 @@ import ViewChangeModal from "./Partials/ViewChangeModal";
 
 interface EnvValueChangesIndexProps extends PageProps {
     envValueChanges: EnvValueChange[];
-    canShowEnvValueChanges: boolean;
+    canViewDevelopment: boolean;
+    canViewStaging: boolean;
+    canViewProduction: boolean;
+    isSuperAdmin: boolean;
 }
 
 const EnvValueChangesIndex = () => {
-    const { envValueChanges, canShowEnvValueChanges } =
-        usePage<EnvValueChangesIndexProps>().props;
-
-    // State for filtering and pagination
+    const {
+        envValueChanges,
+        canViewDevelopment,
+        canViewStaging,
+        canViewProduction,
+        isSuperAdmin,
+    } = usePage<EnvValueChangesIndexProps>().props;
+    console.log("EnvValueChangesIndex props:", envValueChanges);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterType, setFilterType] = useState<string | null>(null);
+    const [filterEnvironment, setFilterEnvironment] = useState<string | null>(
+        null
+    );
     const [currentPage, setCurrentPage] = useState(1);
     const [sortField, setSortField] = useState<
-        "created_at" | "variable" | "application" | "type"
+        "created_at" | "variable" | "application" | "type" | "environment"
     >("created_at");
     const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
     const [selectedChange, setSelectedChange] = useState<EnvValueChange | null>(
@@ -74,6 +87,15 @@ const EnvValueChangesIndex = () => {
         });
         return Array.from(types);
     }, [envValueChanges]);
+
+    // Get available environment types based on user permissions
+    const availableEnvironments = useMemo(() => {
+        const environments = [];
+        if (canViewDevelopment) environments.push("Development");
+        if (canViewStaging) environments.push("Staging");
+        if (canViewProduction) environments.push("Production");
+        return environments;
+    }, [canViewDevelopment, canViewStaging, canViewProduction]);
 
     // Client-side filtering
     const filteredChanges = useMemo(() => {
@@ -96,9 +118,41 @@ const EnvValueChangesIndex = () => {
             const matchesType =
                 filterType === null || change.type === filterType;
 
-            return matchesSearch && matchesType;
+            const matchesEnvironment =
+                filterEnvironment === null ||
+                change.env_value?.access_key?.env_type?.name?.toLowerCase() ===
+                    filterEnvironment.toLowerCase();
+
+            // Only show changes for environments the user has permission to view
+            const hasEnvironmentPermission =
+                isSuperAdmin ||
+                (change.env_value?.access_key?.env_type?.name?.toLowerCase() ===
+                    "development" &&
+                    canViewDevelopment) ||
+                (change.env_value?.access_key?.env_type?.name?.toLowerCase() ===
+                    "staging" &&
+                    canViewStaging) ||
+                (change.env_value?.access_key?.env_type?.name?.toLowerCase() ===
+                    "production" &&
+                    canViewProduction);
+
+            return (
+                matchesSearch &&
+                matchesType &&
+                matchesEnvironment &&
+                hasEnvironmentPermission
+            );
         });
-    }, [envValueChanges, searchTerm, filterType]);
+    }, [
+        envValueChanges,
+        searchTerm,
+        filterType,
+        filterEnvironment,
+        canViewDevelopment,
+        canViewStaging,
+        canViewProduction,
+        isSuperAdmin,
+    ]);
 
     // Client-side sorting
     const sortedChanges = useMemo(() => {
@@ -129,6 +183,18 @@ const EnvValueChangesIndex = () => {
                       ).localeCompare(
                           a.env_value?.access_key?.application?.name || ""
                       );
+            } else if (sortField === "environment") {
+                return sortDirection === "asc"
+                    ? (
+                          a.env_value?.access_key?.env_type?.name || ""
+                      ).localeCompare(
+                          b.env_value?.access_key?.env_type?.name || ""
+                      )
+                    : (
+                          b.env_value?.access_key?.env_type?.name || ""
+                      ).localeCompare(
+                          a.env_value?.access_key?.env_type?.name || ""
+                      );
             } else {
                 // sort by type
                 return sortDirection === "asc"
@@ -150,11 +216,16 @@ const EnvValueChangesIndex = () => {
     // Reset to first page when search term or filter changes
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchTerm, filterType]);
+    }, [searchTerm, filterType, filterEnvironment]);
 
     // Handle sorting
     const handleSort = (
-        field: "created_at" | "variable" | "application" | "type"
+        field:
+            | "created_at"
+            | "variable"
+            | "application"
+            | "type"
+            | "environment"
     ) => {
         if (sortField === field) {
             setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -178,11 +249,40 @@ const EnvValueChangesIndex = () => {
         }
     };
 
+    // Get environment icon
+    const getEnvironmentIcon = (envType: string | undefined) => {
+        switch (envType?.toLowerCase()) {
+            case "development":
+                return <Settings className="h-3.5 w-3.5 text-green-500" />;
+            case "staging":
+                return <Globe className="h-3.5 w-3.5 text-yellow-500" />;
+            case "production":
+                return <Server className="h-3.5 w-3.5 text-red-500" />;
+            default:
+                return <Globe className="h-3.5 w-3.5 text-gray-500" />;
+        }
+    };
+
+    // Get badge color for environment
+    const getEnvironmentBadgeColor = (envType: string | undefined) => {
+        switch (envType?.toLowerCase()) {
+            case "development":
+                return "bg-green-50 text-green-700 border-green-100";
+            case "staging":
+                return "bg-yellow-50 text-yellow-700 border-yellow-100";
+            case "production":
+                return "bg-red-50 text-red-700 border-red-100";
+            default:
+                return "bg-gray-50 text-gray-700 border-gray-100";
+        }
+    };
+
     // View change details
     const viewChangeDetails = (change: EnvValueChange) => {
         setSelectedChange(change);
         setIsViewModalOpen(true);
     };
+
     return (
         <AuthenticatedLayout>
             <Head title="Environment Value Changes" />
@@ -221,7 +321,7 @@ const EnvValueChangesIndex = () => {
                         </div>
                         <div className="mt-1 flex items-baseline">
                             <span className="text-2xl font-semibold text-white">
-                                {envValueChanges.length}
+                                {filteredChanges.length}
                             </span>
                         </div>
                     </div>
@@ -233,7 +333,7 @@ const EnvValueChangesIndex = () => {
                         <div className="mt-1 flex items-baseline">
                             <span className="text-2xl font-semibold text-white">
                                 {
-                                    envValueChanges.filter(
+                                    filteredChanges.filter(
                                         (c) => c.type === "create"
                                     ).length
                                 }
@@ -248,7 +348,7 @@ const EnvValueChangesIndex = () => {
                         <div className="mt-1 flex items-baseline">
                             <span className="text-2xl font-semibold text-white">
                                 {
-                                    envValueChanges.filter(
+                                    filteredChanges.filter(
                                         (c) => c.type === "update"
                                     ).length
                                 }
@@ -263,7 +363,7 @@ const EnvValueChangesIndex = () => {
                         <div className="mt-1 flex items-baseline">
                             <span className="text-2xl font-semibold text-white">
                                 {
-                                    envValueChanges.filter(
+                                    filteredChanges.filter(
                                         (c) => c.type === "delete"
                                     ).length
                                 }
@@ -295,6 +395,62 @@ const EnvValueChangesIndex = () => {
                             />
                         </div>
                         <div className="flex items-center gap-2">
+                            {/* Environment type filter dropdown */}
+                            {availableEnvironments.length > 1 && (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="h-9 border-dashed gap-1"
+                                        >
+                                            <Globe className="h-4 w-4" />
+                                            <span className="hidden sm:inline">
+                                                {filterEnvironment ||
+                                                    "All Environments"}
+                                            </span>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent
+                                        align="end"
+                                        className="w-[200px]"
+                                    >
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                setFilterEnvironment(null)
+                                            }
+                                            className={
+                                                filterEnvironment === null
+                                                    ? "bg-gray-100"
+                                                    : ""
+                                            }
+                                        >
+                                            All Environments
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        {availableEnvironments.map((env) => (
+                                            <DropdownMenuItem
+                                                key={env}
+                                                onClick={() =>
+                                                    setFilterEnvironment(env)
+                                                }
+                                                className={
+                                                    filterEnvironment === env
+                                                        ? "bg-gray-100"
+                                                        : ""
+                                                }
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    {getEnvironmentIcon(env)}
+                                                    {env}
+                                                </div>
+                                            </DropdownMenuItem>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            )}
+
+                            {/* Change type filter dropdown */}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button
@@ -304,7 +460,9 @@ const EnvValueChangesIndex = () => {
                                     >
                                         <SlidersHorizontal className="h-4 w-4" />
                                         <span className="hidden sm:inline">
-                                            Filter by Type
+                                            {filterType
+                                                ? `Type: ${filterType}`
+                                                : "All Types"}
                                         </span>
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -346,6 +504,7 @@ const EnvValueChangesIndex = () => {
                                 onClick={() => {
                                     setSearchTerm("");
                                     setFilterType(null);
+                                    setFilterEnvironment(null);
                                     setSortField("created_at");
                                     setSortDirection("desc");
                                     setCurrentPage(1);
@@ -414,7 +573,23 @@ const EnvValueChangesIndex = () => {
                                         )}
                                     </div>
                                 </TableHead>
-                                <TableHead>Environment</TableHead>
+                                <TableHead
+                                    className="cursor-pointer"
+                                    onClick={() => handleSort("environment")}
+                                >
+                                    <div className="flex items-center gap-1">
+                                        Environment
+                                        {sortField === "environment" && (
+                                            <ArrowUpDown
+                                                className={cn(
+                                                    "h-4 w-4 transition-transform",
+                                                    sortDirection === "desc" &&
+                                                        "transform -rotate-180"
+                                                )}
+                                            />
+                                        )}
+                                    </div>
+                                </TableHead>
                                 <TableHead
                                     className="cursor-pointer"
                                     onClick={() => handleSort("type")}
@@ -451,7 +626,9 @@ const EnvValueChangesIndex = () => {
                                                 No environment changes found
                                             </h3>
                                             <p>
-                                                {searchTerm || filterType
+                                                {searchTerm ||
+                                                filterType ||
+                                                filterEnvironment
                                                     ? "Try adjusting your filters"
                                                     : "No changes have been recorded yet."}
                                             </p>
@@ -510,7 +687,7 @@ const EnvValueChangesIndex = () => {
                                             ) : (
                                                 <span>
                                                     {change.env_value
-                                                        ?.access_key
+                                                        ?.env_variable
                                                         ?.application?.name ||
                                                         "N/A"}
                                                 </span>
@@ -519,12 +696,22 @@ const EnvValueChangesIndex = () => {
                                         <TableCell>
                                             <Badge
                                                 variant="outline"
-                                                className="bg-gray-50"
+                                                className={cn(
+                                                    getEnvironmentBadgeColor(
+                                                        change.env_value
+                                                            ?.access_key
+                                                            ?.env_type?.name
+                                                    ),
+                                                    "flex items-center gap-1.5 w-fit"
+                                                )}
                                             >
-                                                {
+                                                {getEnvironmentIcon(
                                                     change.env_value?.access_key
                                                         ?.env_type?.name
-                                                }
+                                                )}
+                                                {change.env_value?.access_key
+                                                    ?.env_type?.name ||
+                                                    "Unknown"}
                                             </Badge>
                                         </TableCell>
                                         <TableCell>

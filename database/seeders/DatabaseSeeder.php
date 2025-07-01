@@ -32,13 +32,13 @@ class DatabaseSeeder extends Seeder
             EnvTypeSeeder::class,
         ]);
 
-        Group::factory()
-            ->count(10)
-            ->create();
+        // Group::factory()
+        //     ->count(10)
+        //     ->create();
 
-        Application::factory()
-            ->count(100)
-            ->create();
+        // Application::factory()
+        //     ->count(100)
+        //     ->create();
 
 
 

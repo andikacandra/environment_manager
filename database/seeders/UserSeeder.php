@@ -23,11 +23,11 @@ class UserSeeder extends Seeder
 
         $super_admin->assignRole('super-admin');
 
-        User::factory()
-            ->count(10)
-            ->create()
-            ->each(function ($user) {
-                $user->assignRole('programmer');
-            });
+        // User::factory()
+        //     ->count(10)
+        //     ->create()
+        //     ->each(function ($user) {
+        //         $user->assignRole('programmer');
+        //     });
     }
 }

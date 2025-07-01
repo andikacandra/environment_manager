@@ -48,6 +48,7 @@
         "clsx": "^2.1.1",
         "lodash": "^4.17.21",
         "lodash.debounce": "^4.0.8",
+        "lottie-react": "^2.4.1",
         "lucide-react": "^0.503.0",
         "react-hook-form": "^7.56.1",
         "shadcn": "^2.3.0",

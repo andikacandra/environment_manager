@@ -16,18 +16,18 @@ import {
     SlidersHorizontal,
     Lock,
 } from "lucide-react";
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { Badge } from "@/Components/ui/badge";
-import { Breadcrumb } from "@/Components/Breadcrumb";
-import { Card, CardHeader } from "@/Components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { Card, CardHeader } from "@/components/ui/card";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
     Table,
     TableBody,
@@ -35,9 +35,9 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Components/ui/table";
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import ClientPagination from "@/Components/ClientPagination";
+import ClientPagination from "@/components/ClientPagination";
 import CreateRoleModal from "./Partials/CreateRoleModal";
 import EditRoleModal from "./Partials/EditRoleModal";
 import DeleteRoleModal from "./Partials/DeleteRoleModal";

@@ -1,5 +1,6 @@
 "use client";
 
+import Lottie from "lottie-react";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { type FormEventHandler, useEffect, useState, useMemo } from "react";
@@ -14,6 +15,8 @@ import {
     BrainIcon,
     ChevronDownIcon,
 } from "lucide-react";
+
+import devopsAnimation from "@/animations/devops4.json";
 
 export default function Login({ status }: { status?: string }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -44,110 +47,9 @@ export default function Login({ status }: { status?: string }) {
 
     const teamMembers = useMemo(
         () => [
-            {
-                name: "Muhammad Sholaahuddin Al Fatih",
-                role: "Backend Developer",
-                description:
-                    "Responsible for server-side logic, database design, and API development.",
-                icon: <DatabaseIcon className="h-6 w-6" />,
-                color: "from-blue-500 to-blue-700",
-                image: "/images/fatih.jpg",
-            },
-            {
-                name: "Haidar Yamato Lahay",
-                role: "System Analyst",
-                description:
-                    "Designs system architecture and ensures optimal application performance.",
-                icon: <BrainIcon className="h-6 w-6" />,
-                color: "from-purple-500 to-purple-700",
-                image: "/images/haidar.jpg",
-            },
-            {
-                name: "Navy Ardana",
-                role: "Frontend Developer",
-                description:
-                    "Creates responsive and intuitive user interfaces with modern frameworks.",
-                icon: <MonitorIcon className="h-6 w-6" />,
-                color: "from-indigo-500 to-indigo-700",
-                image: "/images/navy.jpg",
-            },
+            
         ],
         []
-    );
-
-    const TeamMembersList = useMemo(
-        () => (
-            <div className="space-y-6">
-                {teamMembers.map((member, index) => (
-                    <div
-                        key={index}
-                        className={`bg-gradient-to-r ${member.color} p-5 rounded-xl shadow-xl team-card-hover animate-fadeIn`}
-                        style={{ animationDelay: `${index * 150}ms` }}
-                    >
-                        <div className="flex items-start">
-                            <div className="mr-4 relative">
-                                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/40 shadow-lg team-photo">
-                                    <img
-                                        src={member.image}
-                                        alt={member.name}
-                                        className="w-full h-full object-cover"
-                                        loading="lazy"
-                                    />
-                                </div>
-                                <div className="absolute -bottom-1 -right-1 bg-white/20 p-1.5 rounded-full backdrop-blur-sm badge-pulse">
-                                    {member.icon}
-                                </div>
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg">
-                                    {member.name}
-                                </h3>
-                                <p className="text-white/90 font-medium">
-                                    {member.role}
-                                </p>
-                                <p className="text-white/75 text-sm mt-2">
-                                    {member.description}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        ),
-        [teamMembers]
-    );
-
-    const MobileTeamList = useMemo(
-        () => (
-            <div className="space-y-4 pb-4">
-                {teamMembers.map((member, index) => (
-                    <div
-                        key={index}
-                        className={`bg-gradient-to-r ${member.color} p-3 rounded-lg shadow-md text-white`}
-                    >
-                        <div className="flex items-center">
-                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/40 mr-3">
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    className="w-full h-full object-cover"
-                                    loading="lazy"
-                                />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-sm">
-                                    {member.name}
-                                </h3>
-                                <p className="text-white/90 text-xs">
-                                    {member.role}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        ),
-        [teamMembers]
     );
 
     return (
@@ -157,7 +59,7 @@ export default function Login({ status }: { status?: string }) {
             <div className="min-h-screen flex flex-col md:flex-row bg-grid-light">
                 <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-indigo-600 to-purple-700 text-white p-8 flex-col justify-between animate-slideInLeft">
                     <div className="mt-8">
-                        <div className="flex items-center mb-8">
+                        <div className="flex items-center mb-2">
                             <div className="h-10 w-10 relative mr-3">
                                 <div className="absolute inset-0 flex items-center justify-center bg-white rounded-xl shadow-lg">
                                     <svg
@@ -180,15 +82,14 @@ export default function Login({ status }: { status?: string }) {
                                 Environment Manager
                             </h1>
                         </div>
-                        <h2 className="text-3xl font-bold mb-4 text-gradient animate-fadeIn animate-delay-200">
-                            Meet Our Team
-                        </h2>
-                        <p className="text-indigo-100 mb-8 animate-fadeIn animate-delay-300">
-                            Our talented team of developers dedicated to
-                            creating powerful environment management solutions.
+                        <p className="text-indigo-100 mb-20 animate-fadeIn animate-delay-300">
+                            Simplify your environment and deployment management with a unified solution.
                         </p>
 
-                        {TeamMembersList}
+                        <div className="w-80 mx-auto pt-20">
+                            <Lottie animationData={devopsAnimation} loop={true} />
+                        </div>
+
                     </div>
 
                     <div className="mt-auto pt-10">
@@ -257,7 +158,6 @@ export default function Login({ status }: { status?: string }) {
                             {/* Mobile Team Cards (Collapsible) */}
                             {showMobileTeam && (
                                 <div className="mt-3 transition-all duration-300 overflow-hidden max-h-[1000px] opacity-100">
-                                    {MobileTeamList}
                                 </div>
                             )}
                         </div>
@@ -421,24 +321,7 @@ export default function Login({ status }: { status?: string }) {
                         </div>
 
                         {/* Footer */}
-                        <div className="mt-8 text-center text-xs text-gray-500">
-                            <p>
-                                By signing in, you agree to our{" "}
-                                <a
-                                    href="#"
-                                    className="text-indigo-600 hover:text-indigo-500 underline underline-offset-2"
-                                >
-                                    Terms of Service
-                                </a>{" "}
-                                and{" "}
-                                <a
-                                    href="#"
-                                    className="text-indigo-600 hover:text-indigo-500 underline underline-offset-2"
-                                >
-                                    Privacy Policy
-                                </a>
-                            </p>
-                        </div>
+                        
                     </div>
                 </div>
             </div>

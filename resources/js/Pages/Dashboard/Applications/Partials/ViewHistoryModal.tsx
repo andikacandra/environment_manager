@@ -1,15 +1,15 @@
 import { useState, useMemo } from "react";
 import { EnvValueChange } from "@/types";
 import { Calendar, Clock, Code, History, User } from "lucide-react";
-import { Badge } from "@/Components/ui/badge";
-import { Button } from "@/Components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from "@/Components/ui/dialog";
+} from "@/components/ui/dialog";
 import {
     Table,
     TableBody,
@@ -17,7 +17,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Components/ui/table";
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 interface ViewHistoryModalProps {

@@ -19,20 +19,20 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
     DropdownMenuSeparator,
-} from "@/Components/ui/dropdown-menu";
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { Breadcrumb } from "@/Components/Breadcrumb";
-import { Badge } from "@/Components/ui/badge";
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Breadcrumb } from "@/components/Breadcrumb";
+import { Badge } from "@/components/ui/badge";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/Components/ui/tooltip";
-import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
+} from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatDate } from "@/lib/utils";
-import ClientPagination from "@/Components/ClientPagination";
+import ClientPagination from "@/components/ClientPagination";
 import DeleteUserModal from "./Partials/DeleteUserModal";
 
 interface UsersIndexProps extends PageProps {

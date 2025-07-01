@@ -8,10 +8,10 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/Components/ui/dialog";
-import { Button } from "@/Components/ui/button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/Components/ui/input";
+import { Input } from "@/components/ui/input";
 import { EnvValue } from "@/types";
 
 interface EditEnvValueModalProps {

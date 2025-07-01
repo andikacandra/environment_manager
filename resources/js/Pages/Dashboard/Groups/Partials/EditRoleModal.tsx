@@ -2,22 +2,22 @@ import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { router } from "@inertiajs/react";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Components/ui/select";
+} from "@/components/ui/select";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogFooter,
     DialogTitle,
-} from "@/Components/ui/dialog";
-import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
+} from "@/components/ui/dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface RoleEditModalProps {
     isOpen: boolean;

@@ -26,10 +26,10 @@ import {
     User,
     ArrowLeft,
 } from "lucide-react";
-import { Badge } from "@/Components/ui/badge";
-import { Button } from "@/Components/ui/button";
-import { Card, CardHeader } from "@/Components/ui/card";
-import { Input } from "@/Components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -37,15 +37,15 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Components/ui/table";
+} from "@/components/ui/table";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
-import { Breadcrumb } from "@/Components/Breadcrumb";
+} from "@/components/ui/dropdown-menu";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import { cn } from "@/lib/utils";
 import {
     Dialog,
@@ -53,7 +53,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from "@/Components/ui/dialog";
+} from "@/components/ui/dialog";
 import { usePage } from "@inertiajs/react";
 
 interface EnvVariableHistoryProps extends PageProps {

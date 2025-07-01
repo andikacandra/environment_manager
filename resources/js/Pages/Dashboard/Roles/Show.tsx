@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Head, Link, router, usePage } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import type { PageProps, Permission, Role, User } from "@/types";
-import { Breadcrumb } from "@/Components/Breadcrumb";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import {
     ArrowLeft,
     Shield,
@@ -27,11 +27,11 @@ import {
     Save,
     Square,
 } from "lucide-react";
-import { Button } from "@/Components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
-import { Badge } from "@/Components/ui/badge";
-import { Separator } from "@/Components/ui/separator";
-import { Input } from "@/Components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -39,22 +39,22 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/Components/ui/tooltip";
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { DialogHeader, DialogFooter } from "@/Components/ui/dialog";
+import { DialogHeader, DialogFooter } from "@/components/ui/dialog";
 import {
     Dialog,
     DialogContent,
     DialogTitle,
     DialogDescription,
-} from "@/Components/ui/dialog";
+} from "@/components/ui/dialog";
 
 interface RolesShowProps extends PageProps {
     role: Role & {

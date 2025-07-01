@@ -2,7 +2,7 @@
 
 import { type ReactNode, useState, useEffect, useRef } from "react";
 import { Head, usePage } from "@inertiajs/react";
-import Sidebar from "@/Components/Sidebar";
+import Sidebar from "@/components/Sidebar";
 import { PageProps, User } from "@/types";
 
 interface AuthenticatedLayoutProps {

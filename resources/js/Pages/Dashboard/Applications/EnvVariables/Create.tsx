@@ -20,7 +20,7 @@ import {
     ShieldAlert,
     ShieldCheck,
 } from "lucide-react";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -28,18 +28,18 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/Components/ui/card";
-import { Input } from "@/Components/ui/input";
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/Components/ui/alert";
-import { Breadcrumb } from "@/Components/Breadcrumb";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/Components/ui/tooltip";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+} from "@/components/ui/tooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
 interface CreateEnvVariablesProps extends PageProps {

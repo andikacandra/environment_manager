@@ -12,10 +12,10 @@ import {
     SlidersHorizontal,
     User,
 } from "lucide-react";
-import { Badge } from "@/Components/ui/badge";
-import { Button } from "@/Components/ui/button";
-import { Card, CardHeader } from "@/Components/ui/card";
-import { Input } from "@/Components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
     Table,
     TableBody,
@@ -23,23 +23,23 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/Components/ui/table";
+} from "@/components/ui/table";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/Components/ui/tooltip";
-import { Breadcrumb } from "@/Components/Breadcrumb";
+} from "@/components/ui/tooltip";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import { cn, formatDate, formatTime } from "@/lib/utils";
-import ClientPagination from "@/Components/ClientPagination";
+import ClientPagination from "@/components/ClientPagination";
 import ViewChangeModal from "./Partials/ViewChangeModal";
 
 interface EnvValueChangesIndexProps extends PageProps {

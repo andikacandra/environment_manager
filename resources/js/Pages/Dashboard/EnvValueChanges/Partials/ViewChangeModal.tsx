@@ -16,8 +16,8 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-} from "@/Components/ui/dialog";
-import { Badge } from "@/Components/ui/badge";
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { EnvValueChange } from "@/types";
 import { cn, formatDate, formatTime } from "@/lib/utils";
 

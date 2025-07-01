@@ -15,7 +15,7 @@ import {
     FolderClosed,
     PanelRight,
 } from "lucide-react";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -23,26 +23,26 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/Components/ui/card";
-import { Input } from "@/Components/ui/input";
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
-import { Alert, AlertDescription } from "@/Components/ui/alert";
-import { Breadcrumb } from "@/Components/Breadcrumb";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Breadcrumb } from "@/components/Breadcrumb";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Progress } from "@/Components/ui/progress";
+import { Progress } from "@/components/ui/progress";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/Components/ui/select";
+} from "@/components/ui/select";
 import { Group, PageProps } from "@/types";
 
 interface CreateApplicationProps extends PageProps {

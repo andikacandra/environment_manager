@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { router } from "@inertiajs/react";
 import { Trash, Loader2, AlertTriangle } from "lucide-react";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
     AlertDialog,
     AlertDialogCancel,
@@ -10,8 +10,8 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/Components/ui/alert-dialog";
-import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
+} from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface DeleteGroupMemberModalProps {
     isOpen: boolean;
